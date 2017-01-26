@@ -51,12 +51,9 @@ class LearningAgent(Agent):
         waypoint = self.planner.next_waypoint() # The next waypoint 
         inputs = self.env.sense(self)           # Visual input - intersection light and traffic
         deadline = self.env.get_deadline(self)  # Remaining deadline
-
-        ########### 
-        ## TO DO ##
-        ###########
+        
         # Set 'state' as a tuple of relevant data for the agent        
-        state = None
+        state = (waypoint, inputs['light'], inputs['oncoming'])
 
         return state
 
@@ -84,6 +81,10 @@ class LearningAgent(Agent):
         # When learning, check if the 'state' is not in the Q-table
         # If it is not, create a new dictionary for that state
         #   Then, for each action available, set the initial Q-value to 0.0
+        try:
+        	self.Q[state]
+        except:
+        	self.Q[state]= {None:0.0, 'forward':0.0, 'left':0.0, 'right':0.0} 
 
         return
 
@@ -96,7 +97,7 @@ class LearningAgent(Agent):
         self.state = state
         self.next_waypoint = self.planner.next_waypoint()
         action = random.choice(self.valid_actions)
-
+        print self.Q[state]
         ########### 
         ## TO DO ##
         ###########
@@ -168,8 +169,8 @@ def run():
     #   display      - set to False to disable the GUI if PyGame is enabled
     #   log_metrics  - set to True to log trial and simulation results to /logs
     #   optimized    - set to True to change the default log file name
-    sim = Simulator(env, update_delay=0.01, log_metrics=True, display=False)
-    
+    sim = Simulator(env)
+  
     ##############
     # Run the simulator
     # Flags:
