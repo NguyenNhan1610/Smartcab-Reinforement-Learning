@@ -47,15 +47,9 @@ class LearningAgent(Agent):
         waypoint = self.planner.next_waypoint() # The next waypoint 
         inputs = self.env.sense(self)           # Visual input - intersection light and traffic
         deadline = self.env.get_deadline(self)  # Remaining deadline
-        
-        # Make oncoming sensor a boolean to reduce state space
-        if inputs['oncoming'] == 'right' or inputs['oncoming'] == 'forward':
-        	traffic = True
-        else:
-        	traffic = False
 
         # Set 'state' as a tuple of relevant data for the agent
-        state = (waypoint, inputs['light'], traffic)
+        state = (waypoint, inputs['light'], inputs['oncoming'] == 'right' or inputs['oncoming'] == 'forward')
 
         return state
 
@@ -157,7 +151,7 @@ def run():
     #   learning   - set to True to force the driving agent to use Q-learning
     #    * epsilon - continuous value for the exploration factor, default is 1
     #    * alpha   - continuous value for the learning rate, default is 0.5
-    agent = env.create_agent(LearningAgent, learning=True, epsilon=0.1, alpha=0.05)
+    agent = env.create_agent(LearningAgent, learning=True, alpha=0.05)
     
     ##############
     # Follow the driving agent
